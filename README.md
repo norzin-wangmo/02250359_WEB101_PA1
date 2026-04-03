@@ -213,9 +213,9 @@ http://localhost:5173/
 ---
 
 ## Output Screenshots:
-src/assets/ss1.jpg
-src/assets/ss2.jpg
-src/assets/ss3.jpg
+![Screenshot 1](src/assets/ss1.jpg)
+![Screenshot 2](src/assets/ss2.jpg)
+![Screenshot 3](src/assets/ss3.jpg)
 
 ## Conclusion
 
