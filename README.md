@@ -213,9 +213,9 @@ http://localhost:5173/
 ---
 
 ## Output Screenshots:
-![Screenshot 1](src/assets/ss1.jpg)
-![Screenshot 2](src/assets/ss2.jpg)
-![Screenshot 3](src/assets/ss3.jpg)
+![Screenshot 1](./netflix-homepage/src/assets/ss1.jpg)
+![Screenshot 2](./netflix-homepage/src/assets/ss2.jpg)
+![Screenshot 3](./netflix-homepage/src/assets/ss3.jpg)
 
 ## Conclusion
 
