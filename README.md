@@ -198,7 +198,7 @@ http://localhost:5173/
 
 ## Repository Link
 
-👉 [[GitHub](https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)](https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)
+👉 [(https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)](https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)
 
 ---
 
