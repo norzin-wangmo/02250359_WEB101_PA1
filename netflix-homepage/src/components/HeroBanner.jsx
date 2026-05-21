@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import heroImage from "../assets/Pindarika.jpg";
 import pindarikaVideo from "../assets/pindarika.mp4";
 
-function HeroBanner() {
+function HeroBanner({ movie, onMoreInfo, onPlay }) {
   const videoRef = useRef(null);
   const [showVideo, setShowVideo] = useState(false);
 
@@ -39,6 +39,7 @@ function HeroBanner() {
         console.log(error);
       }
     }
+    onPlay();
   };
 
   return (
@@ -61,17 +62,15 @@ function HeroBanner() {
 
       <div className="hero-overlay">
         <div className="hero-content">
-          <h2 className="hero-title">Pindarika</h2>
-          <p className="hero-description">
-            A love story between a serpent and a human. A story of love, loss,
-            and revenge. Will their love be stronger or her revenge for her
-            family? Watch Pindarika to find out.
-          </p>
+          <h2 className="hero-title">{movie.title}</h2>
+          <p className="hero-description">{movie.description}</p>
           <div className="hero-buttons">
-            <button className="play-btn" onClick={handlePlayWithSound}>
+            <button type="button" className="play-btn" onClick={handlePlayWithSound}>
               ▶ Play
             </button>
-            <button className="info-btn">More Info</button>
+            <button type="button" className="info-btn" onClick={onMoreInfo}>
+              More Info
+            </button>
           </div>
         </div>
       </div>

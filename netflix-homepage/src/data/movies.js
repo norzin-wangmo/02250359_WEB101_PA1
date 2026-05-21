@@ -1,8 +1,20 @@
+// Static data source for MovieRow / MovieCard (no backend API in this project)
+// Each movie has id (unique key), title, image path, and description
+
+export const featuredMovie = {
+  id: 0,
+  title: "Pindarika",
+  image: "src/assets/pindarika.jpg",
+  description:
+    "A love story between a serpent and a human. A story of love, loss, and revenge. Will their love be stronger or her revenge for her family? Watch Pindarika to find out.",
+};
+
 export const trendingMovies = [
   {
     id: 1,
     title: "Khekpa",
-    image: "src/assets/khekpa.jpg"
+    image: "src/assets/khekpa.jpg",
+    description: "A Bhutanese drama exploring family and tradition.",
   },
   {
     id: 2,

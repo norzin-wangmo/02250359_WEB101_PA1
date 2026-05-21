@@ -1,3 +1,4 @@
+// Footer section for credits and contact-style text at the bottom of the page
 function Footer() {
   return (
     <footer className="footer">

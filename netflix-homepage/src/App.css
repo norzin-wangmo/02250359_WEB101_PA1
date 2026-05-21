@@ -48,6 +48,37 @@
 
 .nav-links li {
   cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.nav-links li:hover,
+.nav-links li.active {
+  color: #e50914;
+  font-weight: bold;
+}
+
+.logo {
+  cursor: pointer;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #555;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  min-width: 180px;
+}
+
+.user-greeting {
+  font-size: 0.9rem;
+  color: #ddd;
 }
 
 .nav-button {
@@ -58,6 +89,10 @@
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+}
+
+.nav-button.secondary {
+  background-color: rgba(109, 109, 110, 0.9);
 }
 
 /* Hero Banner */
@@ -147,9 +182,36 @@
   padding: 20px 40px;
 }
 
+.row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
 .row-title {
   font-size: 1.5rem;
-  margin-bottom: 15px;
+  margin: 0;
+}
+
+.row-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.scroll-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.scroll-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .movie-row-container {
@@ -166,12 +228,42 @@
 
 /* Movie Cards */
 .movie-card {
+  position: relative;
   min-width: 300px;
   transition: transform 0.3s ease;
 }
 
 .movie-card:hover {
   transform: scale(1.05);
+}
+
+.movie-card-main {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: inherit;
+  text-align: center;
+  width: 100%;
+}
+
+.list-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.list-btn.in-list {
+  background: #e50914;
 }
 
 .movie-image {
@@ -187,6 +279,136 @@
   font-size: 0.95rem;
   text-align: center;
   color: white;
+}
+
+.empty-message {
+  padding: 40px;
+  text-align: center;
+  color: #aaa;
+  font-size: 1.1rem;
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.modal {
+  background: #181818;
+  color: white;
+  border-radius: 8px;
+  padding: 28px;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+}
+
+.movie-modal {
+  max-width: 640px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: #aaa;
+  font-size: 1.8rem;
+  cursor: pointer;
+}
+
+.signin-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.signin-modal label {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+.signin-modal input {
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #333;
+  color: white;
+}
+
+.form-error {
+  color: #e87c7c;
+  font-size: 0.9rem;
+}
+
+.modal-primary-btn {
+  margin-top: 8px;
+  background: #e50914;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.modal-movie-image {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.modal-category {
+  color: #46d369;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+.modal-description {
+  line-height: 1.5;
+  color: #ddd;
+  margin: 12px 0 18px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #333;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 6px;
+  border-left: 4px solid #e50914;
+  z-index: 3000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Footer */
@@ -230,6 +452,16 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+  }
+
+  .navbar-right {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .search-input {
+    width: 100%;
+    min-width: 0;
   }
 
   .navbar-left {

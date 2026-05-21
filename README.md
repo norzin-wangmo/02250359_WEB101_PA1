@@ -16,6 +16,17 @@ This project was developed as part of a Web Development assignment.
 * Clean UI inspired by Netflix
 * Reusable React components
 
+## Application Functionality (Fully Interactive)
+
+* **Sign In / Sign Out**: Modal form with validation; greets user by name after login
+* **Search**: Filters movies across all rows by title in real time
+* **Navigation**: Home, TV Shows, Movies, New & Popular, and My List scroll to the correct section
+* **My List**: Add/remove movies with the + button; saved in `localStorage`
+* **Movie details**: Click any poster or hero "More Info" to open a detail modal
+* **Play**: Hero video with sound + toast notification when playback starts
+* **Row scrolling**: Left/right arrow buttons scroll each movie row horizontally
+* **Toast messages**: Feedback for sign in, play, and list actions
+
 ---
 
 ##  Component Structure
