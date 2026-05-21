@@ -14,7 +14,7 @@ function MovieModal({ movie, category, onClose, onPlay, isInList, onToggleList }
           <h2>{movie.title}</h2>
           <p className="modal-description">
             {movie.description ||
-              `Watch ${movie.title} on Heaven Online. Stream now in HD.`}
+              `Watch ${movie.title} on Netflix. Stream now in HD.`}
           </p>
           <div className="modal-actions">
             <button type="button" className="play-btn" onClick={onPlay}>

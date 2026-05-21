@@ -18,7 +18,7 @@ const MOVIE_ROWS = [
   { id: "trending", title: "Trending Now", movies: trendingMovies },
   {
     id: "popular",
-    title: "Popular on Heaven Online",
+    title: "Popular on Netflix",
     movies: popularMovies,
   },
   { id: "action", title: "Action Movies", movies: actionMovies },
@@ -37,7 +37,7 @@ function App() {
 
   // Load saved My List from browser storage on first visit
   useEffect(() => {
-    const saved = localStorage.getItem("heavenOnlineMyList");
+    const saved = localStorage.getItem("netflixMyList");
     if (saved) {
       try {
         setMyListIds(JSON.parse(saved));
@@ -48,7 +48,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("heavenOnlineMyList", JSON.stringify(myListIds));
+    localStorage.setItem("netflixMyList", JSON.stringify(myListIds));
   }, [myListIds]);
 
   useEffect(() => {

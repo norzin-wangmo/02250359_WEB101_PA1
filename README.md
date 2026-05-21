@@ -1,237 +1,228 @@
-# Heaven Online (Netflix Homepage Clone)
+# Netflix Homepage Clone
+
+**Student:** Norzin Wangmo  
+**Module:** WEB101 — Practical Assignment 1  
+**Repository:** [02250359_WEB101_PA1](https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)
+
+---
 
 ## Project Overview
 
-Heaven Online is a React-based web application inspired by the Netflix homepage UI. The goal of this project is to demonstrate component-based architecture, responsive design, and interactive UI behavior using modern frontend development practices.
+This is a React-based **Netflix homepage clone** that recreates the Netflix browse/home screen as a single-page experience. The project demonstrates component-based architecture, responsive layout, and **fully interactive** frontend behavior using React hooks and plain CSS.
 
-This project was developed as part of a Web Development assignment.
-
----
-
-## Features: 
-
-* Hero banner with hover video preview (Pindarika)
-* Movie rows with reusable components
-* Fully responsive (Desktop, Tablet, Mobile)
-* Clean UI inspired by Netflix
-* Reusable React components
-
-## Application Functionality (Fully Interactive)
-
-* **Sign In / Sign Out**: Modal form with validation; greets user by name after login
-* **Search**: Filters movies across all rows by title in real time
-* **Navigation**: Home, TV Shows, Movies, New & Popular, and My List scroll to the correct section
-* **My List**: Add/remove movies with the + button; saved in `localStorage`
-* **Movie details**: Click any poster or hero "More Info" to open a detail modal
-* **Play**: Hero video with sound + toast notification when playback starts
-* **Row scrolling**: Left/right arrow buttons scroll each movie row horizontally
-* **Toast messages**: Feedback for sign in, play, and list actions
+This assignment required one webpage from an existing application — a separate login page or multi-route app was not required. Sign-in and movie browsing are handled on the same page through modals, state, and user actions.
 
 ---
 
-##  Component Structure
+## Defined Functionality
+
+The application achieves the following:
+
+| Feature | Description |
+|--------|-------------|
+| Hero banner | Featured title (*Pindarika*) with hover video preview and Play with sound |
+| Movie rows | Four categories driven by static data in `movies.js` |
+| Search | Real-time filter by movie title across all rows |
+| Navigation | Navbar links scroll to the matching section |
+| Sign In / Sign Out | Modal with validation; displays user greeting when signed in |
+| My List | Add/remove movies via **+** button; persisted in `localStorage` |
+| Movie details | Click a poster or **More Info** to open a detail modal |
+| Row controls | **‹ ›** buttons scroll each row horizontally |
+| Feedback | Toast notifications for play, list, and auth actions |
+| Responsive UI | Layout adapts for desktop, tablet (≤992px), and mobile (≤768px) |
+
+---
+
+## Features
+
+- Hero banner with hover video preview (Pindarika)
+- Reusable movie row and card components
+- Fully responsive design (desktop, tablet, mobile)
+- Netflix-inspired dark UI
+- Interactive state managed in `App.jsx` (no external UI libraries)
+
+---
+
+## Component Structure
 
 ```
 src/
 │
 ├── components/
-│   ├── Navbar.jsx
-│   ├── HeroBanner.jsx
-│   ├── MovieRow.jsx
-│   ├── MovieCard.jsx
+│   ├── Navbar.jsx          # Search, nav links, sign in/out
+│   ├── HeroBanner.jsx      # Featured movie + video logic
+│   ├── MovieRow.jsx        # Category row + scroll buttons
+│   ├── MovieCard.jsx       # Poster, click, add to list
+│   ├── MovieModal.jsx      # Movie detail popup
+│   ├── SignInModal.jsx     # Login form popup
 │   └── Footer.jsx
 │
 ├── data/
-│   └── movies.js
+│   └── movies.js           # All movie categories + featuredMovie
 │
 ├── assets/
 │   ├── Pindarika.jpg
 │   ├── pindarika.mp4
-│   └── other images...
+│   └── movie poster images...
 │
-├── App.jsx
+├── App.jsx                 # Main state and layout
 ├── App.css
 └── main.jsx
 ```
 
 ---
 
-## Component Explanation : 
+## Component Explanation
 
-### 1. Navbar.jsx
+### 1. `App.jsx`
+- Root component; holds shared state (`userName`, `searchQuery`, `myListIds`, selected movie, modals)
+- Passes data and callbacks to children via **props**
+- Saves My List to `localStorage` so it persists after refresh
 
-* Displays website title **Heaven Online**
-* Navigation links (Home, TV Shows, Movies, etc.)
-* Sign-in button
+### 2. `Navbar.jsx`
+- Brand logo, navigation links, search input
+- **Sign In** opens modal; after login shows greeting and **Sign Out**
 
-### 2. HeroBanner.jsx
+### 3. `HeroBanner.jsx`
+- Featured movie from `featuredMovie` in `movies.js`
+- `useRef` + `useState` control hover video (muted) and Play with sound
+- **More Info** opens the movie detail modal
 
-* Displays featured movie (Pindarika)
-* Background image with overlay
-* Video plays on hover
-* Play button allows video with sound
+### 4. `MovieRow.jsx`
+- Receives `title` and `movies` as props
+- Maps data to `MovieCard` with unique `key={movie.id}`
+- Scroll buttons move the row using `useRef` and `scrollBy`
 
-### 3. MovieRow.jsx
+### 5. `MovieCard.jsx`
+- Click poster → opens detail modal
+- **+** button toggles My List without opening the modal
 
-* Displays category title (Trending, Popular, etc.)
-* Maps through movie data and renders MovieCard
+### 6. `SignInModal.jsx` & `MovieModal.jsx`
+- Overlay modals for authentication and movie details
+- Close on **×** or clicking outside the modal
 
-### 4. MovieCard.jsx
-
-* Displays individual movie image and title
-* Simple hover scaling effect
-
-### 5. movies.js
-
-* Stores all movie data
-* Organized into categories:
-
-  * trendingMovies
-  * popularMovies
-  * actionMovies
-  * comedyMovies
+### 7. `movies.js`
+- Static data source (no backend API)
+- Exports: `featuredMovie`, `trendingMovies`, `popularMovies`, `actionMovies`, `comedyMovies`
 
 ---
 
-##  Implementation Decisions
+## Implementation Decisions
 
-### 🔹 1. React (Vite)
+### React + Vite
+Vite was chosen instead of deprecated Create React App for fast dev server and modern React support.
 
-Chosen for fast development and modern tooling.
+### Component-based design
+Each UI section has a single responsibility. `MovieRow` and `MovieCard` are reused for every category.
 
-### 🔹 2. Component-Based Design
+### State in `App.jsx`
+Login, search, My List, and modals live in the parent so all components stay in sync.
 
-* Improves reusability
-* Keeps code clean and organized
+### Hero video on one title only
+Video is limited to **Pindarika** in the hero to avoid loading many large files and keep performance reasonable.
 
-### 🔹 3. Hero Video Only for One Movie
+### Custom CSS (no Bootstrap/Tailwind)
+Layout, responsiveness, and Netflix-style styling were written manually to practise CSS and media queries.
 
-* Video effect applied only to **Pindarika**
-* Avoids performance issues
-* Keeps UI simple and focused
-
-### 🔹 4. CSS Styling (No Framework)
-
-* Custom CSS used instead of Tailwind/Bootstrap
-* Better understanding of layout and responsiveness
-
-### 🔹 5. Responsive Design
-
-* Media queries used for:
-
-  * Tablet (≤992px)
-  * Mobile (≤768px)
-
-### 🔹 6. Hover Video Behavior
-
-* Hover triggers video play
-* Muted autoplay due to browser restrictions
-* Sound enabled only on button click
+### Browser video policy
+Hover uses **muted** autoplay; sound plays only after the user clicks **Play** (browser autoplay rules).
 
 ---
 
-##  Changes Made During Development
+## Architecture Diagram
 
-###  Fixed Import Errors
+```
+App (state: user, search, myList, selectedMovie)
+│
+├── Navbar ──────────────► SignInModal
+├── HeroBanner ──────────► video ref/state
+├── MovieRow (×4)
+│     └── MovieCard (×n) ─► MovieModal
+├── Footer
+└── Toast notifications
+```
 
-* Corrected component paths
-* Ensured all components are exported properly
+---
 
-###  Fixed Blank Screen Issue
+## Problems Faced & Solutions
 
-* Resolved JSX syntax errors
-* Cleaned broken code
-
-### Fixed Image Loading
-
-* Used proper import:
-
-  ```js
-  import heroImage from "../assets/Pindarika.jpg";
-  ```
-
-### Fixed Video Not Playing
-
-* Added `useRef` and `useState`
-* Controlled playback manually
-
-###  Fixed CSS Issues
-
-* Rebuilt full App.css
-* Removed conflicting styles
-
-### Restored Movie Cards
-
-* Removed unnecessary video logic from MovieCard
+| Problem | Solution |
+|--------|----------|
+| Blank screen / import errors | Fixed JSX syntax and component import paths |
+| Images not loading | Used Vite imports for hero assets; consistent paths in `movies.js` |
+| Video not playing on hover | Added `useRef`, `play()`, muted autoplay, and `try/catch` |
+| UI not “fully functional” | Added sign-in modal, search, My List, modals, scroll buttons, and toast feedback |
+| Footer missing from layout | Imported and rendered `<Footer />` in `App.jsx` |
 
 ---
 
 ## Third-Party Dependencies
 
-* React
-* Vite
+- **React** — UI components and hooks
+- **Vite** — build tool and dev server
 
-(No additional libraries were used to keep the project simple and educational)
-
----
-
-## Architecture Diagram (Conceptual)
-
-```
-App
-│
-├── Navbar
-├── HeroBanner
-│     └── Video Logic
-│
-├── MovieRow (multiple)
-│     └── MovieCard (repeated)
-│
-└── Footer
-```
+No extra UI libraries were used so the focus stays on core React and CSS.
 
 ---
 
-## How to Run the Project
+## How to Run
 
 ```bash
+cd netflix-homepage
 npm install
 npm run dev
 ```
 
-Then open:
+Open: `http://localhost:5173/`
 
-```
-http://localhost:5173/
-```
+**Test checklist:** Sign in → search a movie → add to My List → refresh page → click a poster → use row scroll arrows → resize window for responsive layout.
 
 ---
 
-## Repository Link
+## Reflection
 
-👉 [(https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)](https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)
+### What I set out to do
+My goal was to recreate the Netflix homepage look while proving I understand React — components, props, state, and events — not only static HTML/CSS.
+
+### What went well
+Breaking the page into **Navbar**, **HeroBanner**, **MovieRow**, and **MovieCard** made the code easier to manage. Once I moved shared logic into `App.jsx`, features like search and My List worked across the whole page. The hero video was the most interesting part: learning `useRef` to control the `<video>` element and why browsers require muted autoplay on hover helped me understand real browser behaviour, not just tutorials.
+
+### Challenges
+I faced several issues during development: import path mistakes caused a blank screen; image paths needed careful handling with Vite; and video playback failed until I controlled it manually with refs and async `play()`. When my instructor asked for a **fully functional** app, I extended the project with modals, `localStorage`, and user feedback instead of only visual design — that taught me how much **state management** matters in React.
+
+### What I learned
+- How parent–child communication works through **props** and **callbacks**
+- When to use **`useState`** (UI visibility, user, lists) vs **`useRef`** (DOM/media control)
+- How to debug using the browser console and small, step-by-step fixes
+- Responsive design with **media queries** for tablet and mobile
+- That a good assignment demo needs **working interactions**, not only a pretty layout
+
+### What I would improve next
+With more time I would add React Router for separate pages, connect to a real movie API, improve accessibility (keyboard focus, ARIA labels), and lazy-load images for better performance. A backend for real authentication would be the next step beyond frontend-only sign-in.
+
+### Conclusion
+This project started as a UI clone and became a practical lesson in React architecture, debugging, and user interaction. I can explain the code structure and logic in a viva because I built and fixed each feature myself.
 
 ---
 
 ## Learning Outcomes
 
-* Understanding React components
-* Handling state and events
-* Debugging real-world issues
-* Implementing responsive UI
-* Managing assets (images/videos)
+- React component structure and reusability
+- State, events, refs, and conditional rendering
+- Responsive CSS and media queries
+- Debugging import, asset, and media playback issues
+- Building interactive UI without heavy third-party libraries
 
 ---
 
-## Output Screenshots:
-![Screenshot 1](./netflix-homepage/src/assets/ss1.jpg)
-![Screenshot 2](./netflix-homepage/src/assets/ss2.jpg)
+## Screenshots
+
+![Screenshot 1](./netflix-homepage/src/assets/ss1.jpg)  
+![Screenshot 2](./netflix-homepage/src/assets/ss2.jpg)  
 ![Screenshot 3](./netflix-homepage/src/assets/ss3.jpg)
 
-## Conclusion
-
-This project demonstrates a functional and visually appealing frontend application using React. Through debugging and iterative improvements, the final result showcases proper component architecture, responsive design, and interactive UI behavior.
-
 ---
 
+## Repository Link
 
+👉 [https://github.com/norzin-wangmo/02250359_WEB101_PA1.git](https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)

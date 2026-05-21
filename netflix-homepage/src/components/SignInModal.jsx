@@ -31,7 +31,7 @@ function SignInModal({ onClose, onSignIn }) {
         <button type="button" className="modal-close" onClick={onClose}>
           ×
         </button>
-        <h2>Sign In to Heaven Online</h2>
+        <h2>Sign In to Netflix</h2>
         <form onSubmit={handleSubmit}>
           <label htmlFor="email">Email</label>
           <input

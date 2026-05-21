@@ -14,7 +14,7 @@ function Navbar({
     <nav className="navbar">
       <div className="navbar-left">
         <h1 className="logo" onClick={() => onNavClick("Home")}>
-          HEAVEN ONLINE
+          NETFLIX
         </h1>
         <ul className="nav-links">
           {links.map((label) => (
