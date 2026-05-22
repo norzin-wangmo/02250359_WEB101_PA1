@@ -43,35 +43,6 @@ The application achieves the following:
 
 ---
 
-## Component Structure
-
-```
-src/
-│
-├── components/
-│   ├── Navbar.jsx          # Search, nav links, sign in/out
-│   ├── HeroBanner.jsx      # Featured movie + video logic
-│   ├── MovieRow.jsx        # Category row + scroll buttons
-│   ├── MovieCard.jsx       # Poster, click, add to list
-│   ├── MovieModal.jsx      # Movie detail popup
-│   ├── SignInModal.jsx     # Login form popup
-│   └── Footer.jsx
-│
-├── data/
-│   └── movies.js           # All movie categories + featuredMovie
-│
-├── assets/
-│   ├── Pindarika.jpg
-│   ├── pindarika.mp4
-│   └── movie poster images...
-│
-├── App.jsx                 # Main state and layout
-├── App.css
-└── main.jsx
-```
-
----
-
 ## Component Explanation
 
 ### 1. `App.jsx`
@@ -107,6 +78,33 @@ src/
 
 ---
 
+## App States & Error Codes
+
+### States (`appStates.js`)
+| State | Meaning |
+|-------|---------|
+| `loading` | Movies are being fetched (simulated API) |
+| `success` | Data loaded; main UI is shown |
+| `error` | Something failed; banner shows message |
+| `idle` | Form ready (used in Sign In modal) |
+
+### Error codes (`errorCodes.js`)
+| Code | When it happens |
+|------|-----------------|
+| `200` | Success |
+| `4001` | Empty email/password |
+| `4002` | Password too short |
+| `4003` | Invalid email format |
+| `4010` | My List used without sign in |
+| `4040` | Search returned no movies |
+| `5001` | Movies failed to load |
+| `5002` / `5003` | localStorage read/write failed |
+| `5004` | Hero video could not play |
+
+`movieService.js` simulates a backend call today; later replace it with `fetch('/api/movies')` and use the same codes from the server.
+
+---
+
 ## Implementation Decisions
 
 ### React + Vite
@@ -129,20 +127,6 @@ Hover uses **muted** autoplay; sound plays only after the user clicks **Play** (
 
 ---
 
-## Architecture Diagram
-
-```
-App (state: user, search, myList, selectedMovie)
-│
-├── Navbar ──────────────► SignInModal
-├── HeroBanner ──────────► video ref/state
-├── MovieRow (×4)
-│     └── MovieCard (×n) ─► MovieModal
-├── Footer
-└── Toast notifications
-```
-
----
 
 ## Problems Faced & Solutions
 
@@ -175,8 +159,6 @@ npm run dev
 
 Open: `http://localhost:5173/`
 
-**Test checklist:** Sign in → search a movie → add to My List → refresh page → click a poster → use row scroll arrows → resize window for responsive layout.
-
 ---
 
 ## Reflection
@@ -201,7 +183,7 @@ I faced several issues during development: import path mistakes caused a blank s
 With more time I would add React Router for separate pages, connect to a real movie API, improve accessibility (keyboard focus, ARIA labels), and lazy-load images for better performance. A backend for real authentication would be the next step beyond frontend-only sign-in.
 
 ### Conclusion
-This project started as a UI clone and became a practical lesson in React architecture, debugging, and user interaction. I can explain the code structure and logic in a viva because I built and fixed each feature myself.
+This project started as a UI clone and became a practical lesson in React architecture, debugging, and user interaction.
 
 ---
 
@@ -225,4 +207,4 @@ This project started as a UI clone and became a practical lesson in React archit
 
 ## Repository Link
 
-👉 [https://github.com/norzin-wangmo/02250359_WEB101_PA1.git](https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)
+👉 [PA1_WEB101](https://github.com/norzin-wangmo/02250359_WEB101_PA1.git)

@@ -1,25 +1,44 @@
 import { useState } from "react";
+import { APP_STATES } from "../utils/appStates";
+import { ERROR_CODES, getErrorMessage } from "../utils/errorCodes";
 
-// Modal login form: validates input and notifies parent on success
 function SignInModal({ onClose, onSignIn }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [formStatus, setFormStatus] = useState(APP_STATES.IDLE);
+  const [errorCode, setErrorCode] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setErrorCode(null);
+    setErrorMessage("");
+    setFormStatus(APP_STATES.LOADING);
+
+    await new Promise((r) => setTimeout(r, 300));
 
     if (!email.trim() || !password.trim()) {
-      setError("Please enter both email and password.");
+      setFormStatus(APP_STATES.ERROR);
+      setErrorCode(ERROR_CODES.ERR_VALIDATION_EMPTY);
+      setErrorMessage(getErrorMessage(ERROR_CODES.ERR_VALIDATION_EMPTY));
+      return;
+    }
+
+    if (!email.includes("@")) {
+      setFormStatus(APP_STATES.ERROR);
+      setErrorCode(ERROR_CODES.ERR_VALIDATION_EMAIL);
+      setErrorMessage(getErrorMessage(ERROR_CODES.ERR_VALIDATION_EMAIL));
       return;
     }
 
     if (password.length < 4) {
-      setError("Password must be at least 4 characters.");
+      setFormStatus(APP_STATES.ERROR);
+      setErrorCode(ERROR_CODES.ERR_VALIDATION_PASSWORD);
+      setErrorMessage(getErrorMessage(ERROR_CODES.ERR_VALIDATION_PASSWORD));
       return;
     }
 
+    setFormStatus(APP_STATES.SUCCESS);
     const name = email.split("@")[0] || "User";
     onSignIn(name);
     onClose();
@@ -40,6 +59,7 @@ function SignInModal({ onClose, onSignIn }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
+            disabled={formStatus === APP_STATES.LOADING}
           />
           <label htmlFor="password">Password</label>
           <input
@@ -48,10 +68,19 @@ function SignInModal({ onClose, onSignIn }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter password"
+            disabled={formStatus === APP_STATES.LOADING}
           />
-          {error && <p className="form-error">{error}</p>}
-          <button type="submit" className="modal-primary-btn">
-            Sign In
+          {formStatus === APP_STATES.ERROR && errorMessage && (
+            <p className="form-error" role="alert">
+              {errorMessage}
+            </p>
+          )}
+          <button
+            type="submit"
+            className="modal-primary-btn"
+            disabled={formStatus === APP_STATES.LOADING}
+          >
+            {formStatus === APP_STATES.LOADING ? "Signing in..." : "Sign In"}
           </button>
         </form>
       </div>

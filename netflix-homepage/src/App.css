@@ -116,8 +116,14 @@
   pointer-events: none;
 }
 
-.hero-banner:hover .hero-video {
+.hero-video.is-visible,
+.hero-banner:hover .hero-video.is-visible {
   opacity: 1;
+}
+
+.hero-video[controls] {
+  pointer-events: auto;
+  z-index: 2;
 }
 
 .hero-overlay {
@@ -155,6 +161,13 @@
 .hero-buttons {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sound-hint {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #46d369;
 }
 
 .play-btn,
@@ -387,6 +400,34 @@
   flex-wrap: wrap;
 }
 
+.status-banner {
+  position: fixed;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  border-radius: 6px;
+  z-index: 1500;
+  font-size: 0.95rem;
+}
+
+.status-loading {
+  background: #333;
+  color: #fff;
+}
+
+.status-error {
+  background: #3d1515;
+  color: #ff8a8a;
+  border: 1px solid #e50914;
+}
+
+.status-code,
+.toast-code {
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
 .toast {
   position: fixed;
   bottom: 24px;
@@ -395,9 +436,14 @@
   color: white;
   padding: 12px 18px;
   border-radius: 6px;
-  border-left: 4px solid #e50914;
+  border-left: 4px solid #46d369;
   z-index: 3000;
   animation: fadeIn 0.3s ease;
+}
+
+.toast-error {
+  border-left-color: #e50914;
+  background: #2a1515;
 }
 
 @keyframes fadeIn {

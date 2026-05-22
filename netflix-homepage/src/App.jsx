@@ -1,31 +1,23 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Navbar from "./components/Navbar";
 import HeroBanner from "./components/HeroBanner";
 import MovieRow from "./components/MovieRow";
 import Footer from "./components/Footer";
 import SignInModal from "./components/SignInModal";
 import MovieModal from "./components/MovieModal";
-import {
-  trendingMovies,
-  popularMovies,
-  actionMovies,
-  comedyMovies,
-  featuredMovie,
-} from "./data/movies";
+import StatusBanner from "./components/StatusBanner";
+import { featuredMovie } from "./data/movies";
+import { fetchMovieRows } from "./services/movieService";
+import { APP_STATES } from "./utils/appStates";
+import { ERROR_CODES, getErrorMessage } from "./utils/errorCodes";
 import "./App.css";
 
-const MOVIE_ROWS = [
-  { id: "trending", title: "Trending Now", movies: trendingMovies },
-  {
-    id: "popular",
-    title: "Popular on Netflix",
-    movies: popularMovies,
-  },
-  { id: "action", title: "Action Movies", movies: actionMovies },
-  { id: "comedy", title: "Comedy Movies", movies: comedyMovies },
-];
-
 function App() {
+  const [appStatus, setAppStatus] = useState(APP_STATES.LOADING);
+  const [errorCode, setErrorCode] = useState(null);
+  const [statusMessage, setStatusMessage] = useState("");
+
+  const [movieRows, setMovieRows] = useState([]);
   const [userName, setUserName] = useState(null);
   const [showSignIn, setShowSignIn] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,32 +26,86 @@ function App() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [toast, setToast] = useState("");
+  const [toastCode, setToastCode] = useState(null);
 
-  // Load saved My List from browser storage on first visit
-  useEffect(() => {
-    const saved = localStorage.getItem("netflixMyList");
-    if (saved) {
-      try {
-        setMyListIds(JSON.parse(saved));
-      } catch {
-        setMyListIds([]);
-      }
-    }
+  const showToast = useCallback((message, code = ERROR_CODES.OK) => {
+    setToast(message);
+    setToastCode(code === ERROR_CODES.OK ? null : code);
   }, []);
 
+  const setAppError = useCallback((code) => {
+    setAppStatus(APP_STATES.ERROR);
+    setErrorCode(code);
+    setStatusMessage(getErrorMessage(code));
+  }, []);
+
+  const setAppSuccess = useCallback(() => {
+    setAppStatus(APP_STATES.SUCCESS);
+    setErrorCode(null);
+    setStatusMessage("");
+  }, []);
+
+  // Simulate loading movies from API (movieService → later real backend)
   useEffect(() => {
-    localStorage.setItem("netflixMyList", JSON.stringify(myListIds));
-  }, [myListIds]);
+    let cancelled = false;
+
+    async function loadMovies() {
+      setAppStatus(APP_STATES.LOADING);
+      setErrorCode(null);
+      setStatusMessage("");
+
+      const result = await fetchMovieRows();
+
+      if (cancelled) return;
+
+      if (result.code === ERROR_CODES.OK && result.data) {
+        setMovieRows(result.data);
+        setAppSuccess();
+      } else {
+        setMovieRows([]);
+        setAppError(result.code);
+      }
+    }
+
+    loadMovies();
+    return () => {
+      cancelled = true;
+    };
+  }, [setAppError, setAppSuccess]);
+
+  // Load My List from localStorage with error handling
+  useEffect(() => {
+    const saved = localStorage.getItem("netflixMyList");
+    if (!saved) return;
+
+    try {
+      setMyListIds(JSON.parse(saved));
+    } catch {
+      setMyListIds([]);
+      showToast(getErrorMessage(ERROR_CODES.ERR_STORAGE_READ), ERROR_CODES.ERR_STORAGE_READ);
+    }
+  }, [showToast]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("netflixMyList", JSON.stringify(myListIds));
+    } catch {
+      showToast(getErrorMessage(ERROR_CODES.ERR_STORAGE_WRITE), ERROR_CODES.ERR_STORAGE_WRITE);
+    }
+  }, [myListIds, showToast]);
 
   useEffect(() => {
     if (!toast) return undefined;
-    const timer = setTimeout(() => setToast(""), 2500);
+    const timer = setTimeout(() => {
+      setToast("");
+      setToastCode(null);
+    }, 3000);
     return () => clearTimeout(timer);
   }, [toast]);
 
   const allMovies = useMemo(
-    () => MOVIE_ROWS.flatMap((row) => row.movies),
-    []
+    () => movieRows.flatMap((row) => row.movies),
+    [movieRows]
   );
 
   const myListMovies = useMemo(
@@ -74,29 +120,39 @@ function App() {
   };
 
   const openMovie = (movie, category) => {
+    if (!movie) {
+      showToast(getErrorMessage(ERROR_CODES.ERR_MOVIE_NOT_FOUND), ERROR_CODES.ERR_MOVIE_NOT_FOUND);
+      return;
+    }
     setSelectedMovie(movie);
     setSelectedCategory(category);
   };
 
   const toggleMyList = (movieId) => {
+    if (!userName) {
+      showToast(getErrorMessage(ERROR_CODES.ERR_AUTH_REQUIRED), ERROR_CODES.ERR_AUTH_REQUIRED);
+      setShowSignIn(true);
+      return;
+    }
+
     setMyListIds((prev) => {
       if (prev.includes(movieId)) {
-        setToast("Removed from My List");
+        showToast("Removed from My List", ERROR_CODES.OK);
         return prev.filter((id) => id !== movieId);
       }
-      setToast("Added to My List");
+      showToast("Added to My List", ERROR_CODES.OK);
       return [...prev, movieId];
     });
   };
 
   const handleSignIn = (name) => {
     setUserName(name);
-    setToast(`Welcome, ${name}!`);
+    showToast(`Welcome, ${name}!`, ERROR_CODES.OK);
   };
 
   const handleSignOut = () => {
     setUserName(null);
-    setToast("Signed out successfully");
+    showToast("Signed out successfully", ERROR_CODES.OK);
   };
 
   const handleNavClick = (label) => {
@@ -109,6 +165,11 @@ function App() {
     }
 
     if (label === "My List") {
+      if (!userName) {
+        showToast(getErrorMessage(ERROR_CODES.ERR_AUTH_REQUIRED), ERROR_CODES.ERR_AUTH_REQUIRED);
+        setShowSignIn(true);
+        return;
+      }
       document.getElementById("my-list-section")?.scrollIntoView({
         behavior: "smooth",
       });
@@ -129,16 +190,28 @@ function App() {
   };
 
   const handlePlay = (title) => {
-    setToast(`Now playing: ${title}`);
+    showToast(`Now playing: ${title}`, ERROR_CODES.OK);
   };
 
-  const showMyListOnly = activeNav === "My List" && !searchQuery.trim();
+  const handleVideoError = () => {
+    showToast(getErrorMessage(ERROR_CODES.ERR_VIDEO_PLAY), ERROR_CODES.ERR_VIDEO_PLAY);
+  };
+
+  const showMyListOnly = activeNav === "My List" && !searchQuery.trim() && userName;
   const visibleRows = showMyListOnly
     ? []
-    : MOVIE_ROWS.map((row) => ({
-        ...row,
-        movies: filterBySearch(row.movies),
-      })).filter((row) => row.movies.length > 0);
+    : movieRows
+        .map((row) => ({
+          ...row,
+          movies: filterBySearch(row.movies),
+        }))
+        .filter((row) => row.movies.length > 0);
+
+  const searchHasNoResults =
+    appStatus === APP_STATES.SUCCESS &&
+    !showMyListOnly &&
+    searchQuery.trim() &&
+    visibleRows.length === 0;
 
   return (
     <div className="app">
@@ -152,64 +225,82 @@ function App() {
         onSignOut={handleSignOut}
       />
 
-      <HeroBanner
-        movie={featuredMovie}
-        onMoreInfo={() => openMovie(featuredMovie, "Featured")}
-        onPlay={() => handlePlay(featuredMovie.title)}
+      <StatusBanner
+        appStatus={appStatus}
+        message={statusMessage}
+        errorCode={errorCode}
       />
 
-      <div className="rows-container">
-        {showMyListOnly && (
-          <section id="my-list-section">
-            {myListMovies.length > 0 ? (
+      {appStatus === APP_STATES.SUCCESS && (
+        <>
+          <HeroBanner
+            movie={featuredMovie}
+            onMoreInfo={() => openMovie(featuredMovie, "Featured")}
+            onPlay={() => handlePlay(featuredMovie.title)}
+            onVideoError={handleVideoError}
+          />
+
+          <div className="rows-container">
+            {showMyListOnly && (
+              <section id="my-list-section">
+                {myListMovies.length > 0 ? (
+                  <MovieRow
+                    id="my-list"
+                    title="My List"
+                    movies={myListMovies}
+                    onMovieClick={(movie) => openMovie(movie, "My List")}
+                    onToggleList={toggleMyList}
+                    myListIds={myListIds}
+                  />
+                ) : (
+                  <p className="empty-message">
+                    Your list is empty. Sign in and click + on any movie to add it.
+                  </p>
+                )}
+              </section>
+            )}
+
+            {!showMyListOnly &&
+              visibleRows.map((row) => (
+                <MovieRow
+                  key={row.id}
+                  id={row.id}
+                  title={row.title}
+                  movies={row.movies}
+                  onMovieClick={(movie) => openMovie(movie, row.title)}
+                  onToggleList={toggleMyList}
+                  myListIds={myListIds}
+                />
+              ))}
+
+            {searchHasNoResults && (
+              <p className="empty-message">
+                {getErrorMessage(ERROR_CODES.ERR_SEARCH_NO_RESULTS)} &quot;{searchQuery}&quot;
+              </p>
+            )}
+
+            {!showMyListOnly && userName && myListMovies.length > 0 && (
               <MovieRow
-                id="my-list"
+                id="my-list-section"
                 title="My List"
                 movies={myListMovies}
                 onMovieClick={(movie) => openMovie(movie, "My List")}
                 onToggleList={toggleMyList}
                 myListIds={myListIds}
               />
-            ) : (
-              <p className="empty-message">
-                Your list is empty. Click + on any movie to add it.
-              </p>
             )}
-          </section>
-        )}
-
-        {!showMyListOnly &&
-          visibleRows.map((row) => (
-            <MovieRow
-              key={row.id}
-              id={row.id}
-              title={row.title}
-              movies={row.movies}
-              onMovieClick={(movie) => openMovie(movie, row.title)}
-              onToggleList={toggleMyList}
-              myListIds={myListIds}
-            />
-          ))}
-
-        {!showMyListOnly && searchQuery.trim() && visibleRows.length === 0 && (
-          <p className="empty-message">No movies found for &quot;{searchQuery}&quot;</p>
-        )}
-
-        {!showMyListOnly && myListMovies.length > 0 && (
-          <MovieRow
-            id="my-list-section"
-            title="My List"
-            movies={myListMovies}
-            onMovieClick={(movie) => openMovie(movie, "My List")}
-            onToggleList={toggleMyList}
-            myListIds={myListIds}
-          />
-        )}
-      </div>
+          </div>
+        </>
+      )}
 
       <Footer />
 
-      {toast && <div className="toast">{toast}</div>}
+      {toast && (
+        <div className={`toast ${toastCode ? "toast-error" : "toast-success"}`}>
+          {toast}
+          {toastCode && <span className="toast-code"> [{toastCode}]</span>}
+        </div>
+      )}
 
       {showSignIn && (
         <SignInModal
